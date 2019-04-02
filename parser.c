@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "parser.h"
 
 /**
@@ -35,25 +36,23 @@
  * @params: N/A (void)
  * @return: result (int) The resulting token value.
 **/
-int command()
+void command()
 {
-  printf("command(): Begin.\n");
+  // printf("command(): Begin.\n");
   int result = 0;
-  printf("command(): Check for expr().\n");
+  // printf("command(): Check for expr().\n");
   result = expr();
-  printf("command(): Check for EOL.\n");
+  // printf("command(): Check for EOL.\n");
   if (match(EOL))
   {
-    printf("\n\tResult: %d\n", result);
-    printf("command(): End.\n");
+    printf("\n\tResult: %d\n\n", result);
+    // printf("command(): End. Result: %d\n", result);
   }
   else
   {
-    printf("command(): End.\n");
+    // printf("command(): End.\n");
     error("\'\\n\' expected", "command");
   }
-
-  return result;
 }
 
 /**
@@ -63,13 +62,13 @@ int command()
 **/
 int expr()
 {
-  printf("expr(): Begin.\n");
+  // printf("expr(): Begin.\n");
   int result = 0;
-  printf("expr(): Check for term().\n");
+  // printf("expr(): Check for term().\n");
   result = term();
-  printf("expr(): Check for expr_end().\n");
+  // printf("expr(): Check for expr_end().\n");
   result = expr_end(result);
-  printf("expr(): End.\n");
+  // printf("expr(): End. Result: %d\n", result);
 
   return result;
 }
@@ -81,11 +80,11 @@ int expr()
 **/
 int expr_end(int operand)
 {
-  printf("expr_end(): Begin.\n");
+  // printf("expr_end(): Begin.\n");
   int result = 0;
-  printf("expr_end(): Check for expr_infix_operator().\n");
-  result = expr_infix_operator(operand);
-  printf("expr_end(): End.\n");
+  // printf("expr_end(): Check for expr_infix_operator().\n");
+  result += expr_infix_operator(operand);
+  // printf("expr_end(): End. Result: %d\n", result);
 
   return result;
 }
@@ -97,13 +96,13 @@ int expr_end(int operand)
 **/
 int term()
 {
-  printf("term(): Begin.\n");
+  // printf("term(): Begin.\n");
   int result = 0;
-  printf("term(): Check for power().\n");
+  // printf("term(): Check for power().\n");
   result = power();
-  printf("term(): Check for term_end().\n");
+  // printf("term(): Check for term_end().\n");
   result = term_end(result);
-  printf("term(): End.\n");
+  // printf("term(): End. Result: %d\n", result);
 
   return result;
 }
@@ -115,11 +114,11 @@ int term()
 **/
 int term_end(int operand)
 {
-  printf("term_end(): Begin.\n");
+  // printf("term_end(): Begin.\n");
   int result = 0;
-  printf("term_end(): Check for term_infix_operator.\n");
-  result = term_infix_operator(operand);
-  printf("term_end(): End.\n");
+  // printf("term_end(): Check for term_infix_operator.\n");
+  result += term_infix_operator(operand);
+  // printf("term_end(): End. Result: %d\n", result);
 
   return result;
 }
@@ -131,13 +130,13 @@ int term_end(int operand)
 **/
 int power()
 {
-  printf("power(): Begin.\n");
+  // printf("power(): Begin.\n");
   int result = 0;
-  printf("power(): Check for factor().\n");
+  // printf("power(): Check for factor().\n");
   result = factor();
-  printf("power(): Check for power_end().\n");
+  // printf("power(): Check for power_end().\n");
   result = power_end(result);
-  printf("power(): End.\n");
+  // printf("power(): End. Result: %d\n", result);
 
   return result;
 }
@@ -147,13 +146,13 @@ int power()
  * @params: operand (int) The first operand to carry forward.
  * @return: result (int) The resulting token value.
 **/
-int power_end()
+int power_end(int operand1)
 {
-  printf("power_end(): Begin.\n");
+  // printf("power_end(): Begin.\n");
   int result = 0;
-  printf("power_end(): Check for power_infix_operator().\n");
-  result = power_infix_operator(result);
-  printf("power_end(): End.\n");
+  // printf("power_end(): Check for power_infix_operator().\n");
+  result = power_infix_operator(operand1);
+  // printf("power_end(): End. Result: %d\n", result);
 
   return result;
 }
@@ -166,22 +165,23 @@ int power_end()
 int factor()
 {
   int result = 0;
-  printf("factor(): Begin.\n");
+  // printf("factor(): Begin.\n");
 
   if (match(MINUS))
   {
-    printf("factor(): Found \'-\'.\n");
-    printf("factor(): Check for factor1().\n");
+    // printf("factor(): Found \'-\'.\n");
+    getToken();
+    // printf("factor(): Check for factor1().\n");
     result = (-1 * factor1());
-    printf("factor(): End.\n");
+    // printf("factor(): End. Result: %d\n", result);
 
     return result;
   }
   else
   {
-    printf("factor(): Check for factor1().\n");
+    // printf("factor(): Check for factor1().\n");
     result = factor1();
-    printf("factor(): End.\n");
+    // printf("factor(): End. Result: %d\n", result);
 
     return result;
   }
@@ -194,18 +194,20 @@ int factor()
 **/
 int factor1()
 {
-  printf("factor1(): Begin.\n");
+  // printf("factor1(): Begin.\n");
   int result = 0;
 
   if (match(LPAREN))
   {
-    printf("factor1(): Found \'(\'.\n");
-    printf("factor1(): Check for expr().\n");
+    // printf("factor1(): Found \'(\'.\n");
+    getToken();
+    // printf("factor1(): Check for expr().\n");
     result = expr();
     if (match(RPAREN))
     {
-      printf("factor1(): Found \')\'.\n");
-      printf("factor1(): End.\n");
+      // printf("factor1(): Found \')\'.\n");
+      getToken();
+      // printf("factor1(): End. Result: %d\n", result);
       return result;
     }
     else
@@ -215,9 +217,14 @@ int factor1()
   }
   else if (match(NUMBER))
   {
-    printf("factor1(): Found \'[0-9]+\'.\n");
-    return Token.value;
+    // printf("factor1(): Found \'[0-9]+\'.\n");
+    result = token.value;
+    getToken();
+    // printf("factor1(): End. Result: %d\n", result);
+    return result;
   }
+
+  return result;
 }
 
 /**
@@ -238,9 +245,9 @@ void error(char* error, char* source)
 **/
 void show_token(char* tokenType)
 {
-  if (tokenType == "EOL")
+  if (strcmp(tokenType, "EOL") == 0)
     return;
-  else if (tokenType == "NUMBER")
+  else if (strcmp(tokenType, "NUMBER") == 0)
     printf("\t %d \t %s \n", token.value, tokenType);
   else
     printf("\t %c \t %s \n", token.value, tokenType);
@@ -253,32 +260,34 @@ void show_token(char* tokenType)
 **/
 int expr_infix_operator(int operand1)
 {
-  printf("expr_infix_operator(): Begin.\n");
+  // printf("expr_infix_operator(): Begin.\n");
   int result = 0;
 
   if (match(PLUS))
   {
-    printf("expr_infix_operator(): Found a \'+\'.\n");
-    printf("expr_infix_operator(): Check for term().\n");
+    // printf("expr_infix_operator(): Found a \'+\'.\n");
+    getToken();
+    // printf("expr_infix_operator(): Check for term().\n");
     result = operand1 + term();
-    printf("expr_infix_operator(): Check for expr_end().\n");
+    // printf("expr_infix_operator(): Check for expr_end().\n");
     result = expr_end(result);
-    printf("expr_infix_operator(): End.\n");
+    // printf("expr_infix_operator(): End. Result: %d\n", result);
 
     return result;
   }
   else if (match(MINUS))
   {
-    printf("expr_infix_operator(): Found a \'-\'.\n");
-    printf("expr_infix_operator(): Check for term().\n");
+    // printf("expr_infix_operator(): Found a \'-\'.\n");
+    getToken();
+    // printf("expr_infix_operator(): Check for term().\n");
     result = operand1 - term();
-    printf("expr_infix_operator(): Check for expr_end().\n");
+    // printf("expr_infix_operator(): Check for expr_end().\n");
     result = expr_end(result);
-    printf("expr_infix_operator(): End.\n");
+    // printf("expr_infix_operator(): End. Result: %d\n", result);
 
     return result;
   }
-  printf("expr_infix_operator(): End.\n");
+  // printf("expr_infix_operator(): End. Result: %d\n", operand1);
 
   return operand1;
 }
@@ -290,43 +299,46 @@ int expr_infix_operator(int operand1)
 **/
 int term_infix_operator(int operand1)
 {
-  printf("term_infix_operator(): Begin.\n");
+  // printf("term_infix_operator(): Begin.\n");
   int result = 0;
 
   if (match(MULT))
   {
-    printf("term_infix_operator(): Found a \'*\'.\n");
-    printf("term_infix_operator(): Check for power().\n");
+    // printf("term_infix_operator(): Found a \'*\'.\n");
+    getToken();
+    // printf("term_infix_operator(): Check for power().\n");
     result = operand1 * power();
-    printf("term_infix_operator(): Check for term_end().\n");
+    // printf("term_infix_operator(): Check for term_end().\n");
     result = term_end(result);
-    printf("term_infix_operator(): End.\n");
+    // printf("term_infix_operator(): End. Result: %d\n", result);
 
     return result;
   }
   else if (match(DIVIDE))
   {
-    printf("term_infix_operator(): Found a \'\\\'.\n");
-    printf("term_infix_operator(): Check for power().\n");
+    // printf("term_infix_operator(): Found a \'\\\'.\n");
+    getToken();
+    // printf("term_infix_operator(): Check for power().\n");
     result = operand1 / power();
-    printf("term_infix_operator(): Check for term_end().\n");
+    // printf("term_infix_operator(): Check for term_end().\n");
     result = term_end(result);
-    printf("term_infix_operator(): End.\n");
+    // printf("term_infix_operator(): End. Result: %d\n", result);
 
     return result;
   }
   else if (match(REMAINDER))
   {
-    printf("term_infix_operator(): Found a \'%\'.\n");
-    printf("term_infix_operator(): Check for power().\n");
+    // printf("term_infix_operator(): Found a \'%%\'.\n");
+    getToken();
+    // printf("term_infix_operator(): Check for power().\n");
     result = operand1 % power();
-    printf("term_infix_operator(): Check for term_end().\n");
+    // printf("term_infix_operator(): Check for term_end().\n");
     result = term_end(result);
-    printf("term_infix_operator(): End.\n");
+    // printf("term_infix_operator(): End. Result: %d\n", result);
 
     return result;
   }
-  printf("term_infix_operator(): End.\n");
+  // printf("term_infix_operator(): End. Result: %d\n", operand1);
 
   return operand1;
 }
@@ -338,19 +350,20 @@ int term_infix_operator(int operand1)
 **/
 int power_infix_operator(int operand1)
 {
-  printf("power_infix_operator(): Begin.\n");
+  // printf("power_infix_operator(): Begin.\n");
   int result = 0;
 
   if (match(POWER))
   {
-    printf("power_infix_operator(): Found a \'^\'.\n");
-    printf("power_infix_operator(): Check for power().\n");
+    // printf("power_infix_operator(): Found a \'^\'.\n");
+    getToken();
+    // printf("power_infix_operator(): Check for power().\n");
     result = (int) pow((double) operand1, (double) power());
-    printf("power_infix_operator(): End.\n");
+    // printf("power_infix_operator(): End. Result: %d\n", result);
     return result;
   }
 
-  printf("power_infix_operator(): End.\n");
+  // printf("power_infix_operator(): End. Result: %d\n", operand1);
   return operand1;
 }
 
@@ -361,7 +374,7 @@ int power_infix_operator(int operand1)
 **/
 void lexer()
 {
-  printf("lexer(): Begin.\n");
+  // printf("lexer(): Begin.\n");
 
   if (token.type == NUMBER) { token.type = NUMBER; show_token("NUMBER"); }
   else if (token.value == MINUS) { token.type = MINUS; show_token("MINUS"); }
@@ -375,11 +388,11 @@ void lexer()
   else if (token.value == PLUS) { token.type = PLUS; show_token("PLUS"); }
   else
   {
-    printf("Token entered: %c\n", token.value);
+    // printf("Token entered: %c\n", token.value);
     error("Unrecognized token", "lexer()");
   }
 
-  printf("lexer(): End.\n");
+  // printf("lexer(): End.\n");
   return;
 }
 
@@ -390,17 +403,15 @@ void lexer()
 **/
 bool match(TokenType tkType)
 {
-  printf("match(): Begin.\n");
+  // printf("match(): Begin.\n");
 
   if (token.type == tkType)
   {
-    printf("match(): Success. Reading new token.\n");
-    getToken();
-
+    // printf("match(): Found %c.\n", tkType);
     return true;
   }
 
-  printf("match(): End.\n");
+  // printf("match(): End.\n");
 
   return false;
 }
@@ -412,6 +423,7 @@ bool match(TokenType tkType)
 **/
 struct Token getToken()
 {
+  // printf("getToken(): Begin.\n");
   int currentCharacter = 0;
   // Reset global token
   token.value = 0;
@@ -443,6 +455,9 @@ struct Token getToken()
     token.value = currentCharacter;
     lexer();
   }
+
+  // printf("getToken(): End.\n");
+  return token;
 }
 
 /**
@@ -452,8 +467,27 @@ struct Token getToken()
 **/
 void parse()
 {
+  // printf("parse(): Begin.\n");
+  printf("\nInput: ");
   getToken();
   command();
+  // printf("parse(): End.\n");
+}
+
+/**
+ * Scans the next upcoming token, performs lexical analysis.
+ * Just performs a test of tokenization, to verify everything works.
+ * Expects a two-operand single-operator infix expression, checks for PLUS to verify input.
+ * @params: N/A (void)
+ * @return: N/A (void)
+**/
+void scan_test()
+{
+  // printf("scan(): Begin.\n");
+  // printf("Input: ");
+  getToken();
+  getToken();
+  // printf("scan(): Begin.\n");
 }
 
 /**
@@ -463,13 +497,8 @@ void parse()
 **/
 int main()
 {
-  // parse();
-
-  printf("Hello World\n");
-  printf("Enter string: ");
-
-  getToken();
-  getToken();
-  if (match(PLUS))
-      printf("Success. \n");
+  // printf("***** Top-Down Recursive Descent Parser *****\n");
+  // scan_test();
+  parse();
+  // printf("***** END *****\n");
 }

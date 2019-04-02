@@ -41,25 +41,26 @@ struct Token
   int value;
 };
 
-char* input = NULL;
 struct Token token;
 
-int expr();
-int expr_infix_operator(int operand1);
-int expr_end(int);
-int term();
-int term_infix_operator(int operand1);
-int term_end(int);
-int power();
-int power_infix_operator(int operand1);
-int power_end(int);
-int factor();
-int factor1();
 void error();
 void show_token(char* tokenType);
+bool match(TokenType tkType);
 void lexer();
-void match(TokenType tkType);
+int factor1();
+int factor();
+int power_infix_operator(int operand1);
+int power_end(int operand1);
+int power();
+int term_infix_operator(int operand1);
+int term_end(int);
+int term();
+int expr_infix_operator(int operand1);
+int expr_end(int);
+int expr();
 struct Token getToken();
+void command();
+void scan_test();
 void parse();
 
 #endif
